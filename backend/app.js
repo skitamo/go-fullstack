@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -11,6 +12,12 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+
+mongoose.connect('mongodb+srv://Momo:Skitty35@fullstack.id6uj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+  { useNewUrlParser: true,
+    useUnifiedTopology: true })
+  .then(() => console.log('Connexion à MongoDB réussie !'))
+  .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 app.post('/api/stuff', (req, res, next) => {
   console.log(req.body);
