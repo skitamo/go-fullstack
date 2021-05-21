@@ -2,6 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const Thing = require('./models/Thing');
+
+mongoose.connect('mongodb+srv://Momo:Skitty35@fullstack.id6uj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+  { useNewUrlParser: true,
+    useUnifiedTopology: true })
+  .then(() => console.log('Connexion à MongoDB réussie !'))
+  .catch(() => console.log('Connexion à MongoDB échouée !'));
+
 const app = express();
 
 app.use((req, res, next) => {
@@ -13,17 +21,14 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb+srv://Momo:Skitty35@fullstack.id6uj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
-
 app.post('/api/stuff', (req, res, next) => {
-  console.log(req.body);
-  res.status(201).json({
-    message: 'Objet créé !'
+  delete req.body._id;
+  const thing = new Thing({
+    ...req.body
   });
+  thing.save()
+  .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
+  .catch(error => res.status(400).json({ error }));
 });
 
 app.use('/api/stuff', (req, res, next) => {
